@@ -63,6 +63,7 @@
                         if($conn->query("INSERT INTO users VALUES (NULL, '$login', '$haslo', '$email')")) {
                             $_SESSION['udana'] = ' udana!';
                             header('Location: index.php');
+                            exit();
                         }
                         else throw new Exception($conn->error);
                     }
@@ -112,7 +113,7 @@
     <h1>Car-Reminder!</h1>
     <h4>Strona stworzona w celu przećwiczenia umiejętności PHP. Żeby nie była bezużyteczna to symuluje 
         "przypominacz samochodowy" aby pamiętać kiedy przeprowadzaliśmy okresowe naprawy :)</h4></br>
-    <h2>Rejestracja<?php echo $_SESSION['udana'] ??= '' ?></h2>
+    <h2>Rejestracja <?php echo $_SESSION['udana'] ??= ''; unset($_SESSION['udana']);?></h2>
     <form action="" method="post">
         <div class="row">
             <div class="col">
@@ -183,4 +184,3 @@
     </form> 
 </body>
 </html>
-<?php unset($_SESSION['udana']) ?>
