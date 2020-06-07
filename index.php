@@ -59,8 +59,10 @@
                     if($ile_loginow) {
                         $bledy['login'] = 'Taki login istnieje już w bazie danych!';
                     }
+                    #rejestracja udana
                     if(empty($bledy)) {
-                        if($conn->query("INSERT INTO users VALUES (NULL, '$login', '$haslo', '$email')")) {
+                        $haslo_hash = password_hash($haslo, PASSWORD_DEFAULT);
+                        if($conn->query("INSERT INTO users VALUES (NULL, '$login', '$haslo_hash', '$email')")) {
                             $_SESSION['udana'] = ' udana!';
                             header('Location: index.php');
                             exit();
@@ -75,6 +77,7 @@
             }
         }
     }
+    #sanityzacja danych
     function dane_post($pole)
     {
         $_POST[$pole] ??= '';
@@ -113,25 +116,25 @@
     <h1>Car-Reminder!</h1>
     <h4>Strona stworzona w celu przećwiczenia umiejętności PHP. Żeby nie była bezużyteczna to symuluje 
         "przypominacz samochodowy" aby pamiętać kiedy przeprowadzaliśmy okresowe naprawy :)</h4></br>
-    <h2>Rejestracja <?php echo $_SESSION['udana'] ??= ''; unset($_SESSION['udana']);?></h2>
+    <h2>Rejestracja <?= $_SESSION['udana'] ??= ''; unset($_SESSION['udana']);?></h2>
     <form action="" method="post">
         <div class="row">
             <div class="col">
                 <div class="form-group">
                     <label>Login</label>
-                    <input class="form-control <?php echo isset($bledy['login']) ? 'is-invalid' : ''?>" type="text" name="login" value="<?php echo $login;?>">
+                    <input class="form-control <?= isset($bledy['login']) ? 'is-invalid' : ''?>" type="text" name="login" value="<?= $login;?>">
                     <small class="form-text text-muted">3-20 znaków.</small>
                     <div class="invalid-feedback">
-                        <?php echo $bledy['login'] ?>
+                        <?= $bledy['login'] ?>
                     </div>
                 </div>
             </div>
             <div class="col">
                 <div class="form-group">
                     <label>E-mail</label>
-                    <input class="form-control <?php echo isset($bledy['email']) ? 'is-invalid' : ''?>" type="text" name="email" value="<?php echo $email;?>">
+                    <input class="form-control <?= isset($bledy['email']) ? 'is-invalid' : ''?>" type="text" name="email" value="<?= $email;?>">
                     <div class="invalid-feedback">
-                        <?php echo $bledy['email'] ?>
+                        <?= $bledy['email'] ?>
                     </div>
                 </div>
             </div>
@@ -140,19 +143,19 @@
             <div class="col">
                 <div class="form-group">
                     <label>Hasło</label>
-                    <input class="form-control <?php echo isset($bledy['haslo']) ? 'is-invalid' : ''?>" name="haslo" type="password" value="<?php echo $haslo;?>">
+                    <input class="form-control <?= isset($bledy['haslo']) ? 'is-invalid' : ''?>" name="haslo" type="password" value="<?= $haslo;?>">
                     <small class="form-text text-muted">Min. 8 znaków</small>
                     <div class="invalid-feedback">
-                        <?php echo $bledy['haslo'] ?>
+                        <?= $bledy['haslo'] ?>
                     </div>
                 </div>
             </div>
             <div class="col">
                 <div class="form-group">
                     <label>Powtórz hasło</label>
-                    <input class="form-control <?php echo isset($bledy['haslo2']) ? 'is-invalid' : ''?>" name="haslo2" type="password" value="<?php echo $haslo2;?>">
+                    <input class="form-control <?= isset($bledy['haslo2']) ? 'is-invalid' : ''?>" name="haslo2" type="password" value="<?= $haslo2;?>">
                     <div class="invalid-feedback">
-                        <?php echo $bledy['haslo2'] ?>
+                        <?= $bledy['haslo2'] ?>
                     </div>
                 </div>
             </div>
@@ -168,13 +171,16 @@
             <div class="col">
                 <div class="form-group">
                     <label>Login</label>
-                    <input class="form-control" name="login" type="text">
+                    <input class="form-control <?= isset($_SESSION['blad_log']) ? 'is-invalid' : ''?>" name="login" type="text">
+                    <div class="invalid-feedback">
+                        <?= $_SESSION['blad_log'] ?? ''?>
+                    </div>
                 </div>
             </div>
             <div class="col">
                 <div class="form-group">
                     <label>Hasło</label>
-                    <input class="form-control" type="password" name="haslo">
+                    <input class="form-control <?= isset($_SESSION['blad_log']) ? 'is-invalid' : ''?>" type="password" name="haslo">
                 </div>
             </div>
         </div>
