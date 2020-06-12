@@ -1,16 +1,16 @@
 <?php
-    if(isset($_POST['login'])) {
+    if(isset($_POST['llogin'])) {
         session_start();
-        require_once("connect.php");
+        require_once("baza.php");
         mysqli_report(MYSQLI_REPORT_STRICT);
         try {
-            $conn = new mysqli($host, $db_user, $db_pass, $db_name);
+            $conn = new mysqli($dbhost, $dbuser, $dbpass, $dbname);
             if($conn->connect_errno!=0) {
                 throw new Exception(mysqli_connect_errno());
             }
             else {
-                $login = filter_input(INPUT_POST, 'login');
-                $haslo = filter_input(INPUT_POST, 'haslo');
+                $login = filter_input(INPUT_POST, 'llogin');
+                $haslo = filter_input(INPUT_POST, 'lhaslo');
                 if($wynik = $conn->query("SELECT * FROM users WHERE login='$login'"))
                 {
                     $ilosc = $wynik->num_rows;

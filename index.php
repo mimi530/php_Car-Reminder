@@ -1,6 +1,7 @@
 <?php
     #formluarz rejestracji
     session_start();
+    if(isset($_SESSION['zalogowany']) && $_SESSION['zalogowany']) header("Location: main.php");
     $bledy = [];
     define('WYMAGANE','To pole jest wymagane!');
     $login = '';
@@ -37,10 +38,10 @@
         }
         #walidacja skonczona
         if(empty($bledy)) {
-            require_once('connect.php');
+            require_once('baza.php');
             mysqli_report(MYSQLI_REPORT_STRICT);
             try {
-                $conn = new mysqli($host, $db_user, $db_pass, $db_name);
+                $conn = new mysqli($dbhost, $dbuser, $dbpass, $dbname);
                 if($conn->connect_errno!=0) {
                     throw new Exception(mysqli_connect_errno());
                 }
@@ -90,6 +91,7 @@
     <meta charset="UTF-8">
     <meta author="Michał Domżalski">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" 
     href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" 
     integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
@@ -115,7 +117,7 @@
 <body>
     <h1>Car-Reminder!</h1>
     <h4>Strona stworzona w celu przećwiczenia umiejętności PHP. Żeby nie była bezużyteczna to symuluje 
-        "przypominacz samochodowy" aby pamiętać kiedy przeprowadzaliśmy okresowe naprawy :)</h4></br>
+        "książeczkę serwisową" aby pamiętać kiedy przeprowadzaliśmy naprawy :)</h4></br>
     <h2>Rejestracja <?= $_SESSION['udana'] ??= ''; unset($_SESSION['udana']);?></h2>
     <form action="" method="post">
         <div class="row">
@@ -171,7 +173,7 @@
             <div class="col">
                 <div class="form-group">
                     <label>Login</label>
-                    <input class="form-control <?= isset($_SESSION['blad_log']) ? 'is-invalid' : ''?>" name="login" type="text">
+                    <input class="form-control <?= isset($_SESSION['blad_log']) ? 'is-invalid' : ''?>" name="llogin" type="text">
                     <div class="invalid-feedback">
                         <?= $_SESSION['blad_log'] ?? ''?>
                     </div>
@@ -180,7 +182,7 @@
             <div class="col">
                 <div class="form-group">
                     <label>Hasło</label>
-                    <input class="form-control <?= isset($_SESSION['blad_log']) ? 'is-invalid' : ''?>" type="password" name="haslo">
+                    <input class="form-control <?= isset($_SESSION['blad_log']) ? 'is-invalid' : ''?>" type="password" name="lhaslo">
                 </div>
             </div>
         </div>
@@ -190,3 +192,6 @@
     </form> 
 </body>
 </html>
+<?php
+    unset($_SESSION['blad_log']);
+?>
