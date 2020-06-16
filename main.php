@@ -1,24 +1,41 @@
 <?php
     session_start();
-    if(!$_SESSION['zalogowany'])
-    {
+    if(!$_SESSION['zalogowany']) {
         header("Location: index.php");
     }
     $polaczenie = require_once 'Connection.php';
-    $naprawy = $polaczenie->wypisz($_SESSION['id']);
-    if(isset($_POST['guzik']))
-    {
+    $naprawy = $polaczenie->wypiszNaprawy($_SESSION['id']);
+    if(isset($_POST['naprawa'])) {
         $tytul = dane_post('naprawa');
         $data = dane_post('data_naprawy');
         $przebieg = dane_post('przebieg');
-        $polaczenie->zapisz($tytul, $data, $przebieg, $_SESSION['id']);
+        if(!$tytul) $tytul = 'Bez tytułu';
+        if(!$data) $data = date('Y-m-d');
+        if(!$przebieg) $przebieg = 0;
+        if($_POST['id']) $polaczenie->edytujNaprawe($_POST['id'],$tytul, $data, $przebieg);
+        else $polaczenie->zapiszNaprawe($tytul, $data, $przebieg, $_SESSION['id']);
         header("Location: main.php");
     }
-    function dane_post($pole)
+    if(isset($_GET['id_usun']))
     {
+        $polaczenie->usunNaprawe($_GET['id_usun']);
+        header("Location: main.php");
+        exit();
+    }
+    $obecnaNaprawa = [
+        'id' => '',
+        'tytul' => '',
+        'przebieg' => '',
+        'data' => ''
+    ];
+    if(isset($_GET['id'])){
+        $obecnaNaprawa = $polaczenie->pobierzNaprawe($_GET['id']);
+    }
+    function dane_post($pole) {
         return htmlspecialchars(stripslashes($_POST[$pole]));
     }
 ?>
+
 <!DOCTYPE html>
 <html lang="pl">
 <head>
@@ -82,7 +99,10 @@
                     <div class="col">
                         <div class="form-group">
                             <label>Jaka naprawa</label>
-                            <input type="text" class="form-control" name="naprawa" placeholder="np. Wymiana oleju">
+                            <input type="hidden" name="id" value="<?= $obecnaNaprawa['id'] ?>">
+                            <input type="text" class="form-control" name="naprawa" 
+                                placeholder="np. Wymiana oleju" value="<?= $obecnaNaprawa['tytul'] ?>">
+                            <small class="form-text text-muted">Domyślnie "Bez tytułu"</small>
                         </div>
                     </div>
                 </div>
@@ -90,7 +110,8 @@
                     <div class="col">
                         <div class="form-group">
                             <label>Data naprawy</label>
-                            <input type="date" class="form-control" name="data_naprawy">
+                            <input type="date" class="form-control" name="data_naprawy" value="<?= $obecnaNaprawa['data'] ?>">
+                            <small class="form-text text-muted">Domyślnie data bieżąca</small>
                         </div>
                     </div>
                 </div>
@@ -98,14 +119,21 @@
                     <div class="col">
                         <div class="form-group">
                             <label>Przegieg w km</label>
-                            <input type="number" class="form-control" name="przebieg">
+                            <input type="number" class="form-control" name="przebieg" value="<?= $obecnaNaprawa['przebieg'] ?>">
+                            <small class="form-text text-muted">Domyślnie 0</small>
                         </div>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col">
                         <div class="form-group">
-                            <input type="submit" name="guzik" class="btn btn-primary" value="Dodaj naprawę">
+                            <button class="btn btn-primary">
+                                <?php if($obecnaNaprawa['id']): ?>
+                                    Zmień
+                                <?php else: ?>
+                                    Dodaj naprawę
+                                <?php endif; ?>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -126,10 +154,15 @@
                 <tbody>
                     <?php
                         $naprawy = $naprawy->fetchAll(PDO::FETCH_ASSOC);
-                        foreach($naprawy as $naprawa){
-                            echo "<tr><td>{$naprawa['tytul']}</td><td>{$naprawa['przebieg']}</td><td>{$naprawa['data']}</td><td>Edytuj</td><td>X</td></tr>";
-                        }
-                    ?>
+                        foreach($naprawy as $naprawa): ?>
+                            <tr>
+                                <td><?= $naprawa['tytul'] ?></td>
+                                <td><?= $naprawa['przebieg'] ?></td>
+                                <td><?= $naprawa['data'] ?></td>
+                                <td><a href="?id=<?= $naprawa['id'] ?>">Edytuj</a></td>
+                                <td><a href="?id_usun=<?= $naprawa['id'] ?>">X</a></td>
+                            </tr>
+                        <?php endforeach; ?>
                 </tbody>
             </table>
         </section>
