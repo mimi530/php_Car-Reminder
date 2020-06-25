@@ -49,7 +49,7 @@
     <title>Car Reminder</title>
     <!--"Talk is cheap, show me the code."-->
 </head>
-<body>
+<body style="padding: 100px 0px 0px 0px;">
     <header>
         <h1>Historia napraw samochodu</h1>
     </header>
