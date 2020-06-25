@@ -1,5 +1,4 @@
 <?php
-    #formluarz rejestracji
     session_start();
     if(isset($_SESSION['zalogowany']) && $_SESSION['zalogowany']) header("Location: main.php");
     $bledy = [];
@@ -9,12 +8,10 @@
     $haslo = '';
     $haslo2 = '';
     if($_SERVER['REQUEST_METHOD'] === 'POST') {
-        #zabezpiecznie danych
         $login = dane_post('login');
         $email = dane_post('email');
         $haslo = dane_post('haslo');
         $haslo2 = dane_post('haslo2');
-        #walidacja warunków rejestracji
         if(!$login) {
             $bledy['login'] = WYMAGANE;
         } elseif (strlen($login)<3 || strlen($login)>20) {
@@ -36,7 +33,6 @@
         if($haslo && $haslo2 && strcmp($haslo, $haslo2)) {
             $bledy['haslo2'] = 'Hasła muszą się zgadzać!';
         }
-        #walidacja skonczona
         if(empty($bledy)) {
             require_once('baza.php');
             mysqli_report(MYSQLI_REPORT_STRICT);
@@ -46,21 +42,18 @@
                     throw new Exception(mysqli_connect_errno());
                 }
                 else {
-                    #czy email istnieje juz w bazie
                     $wynik = $conn->query("SELECT id FROM users WHERE email='$email'");
                     if(!$wynik) throw new Exception($conn->error);
                     $ile_maili = $wynik->num_rows;
                     if($ile_maili) {
                         $bledy['email'] = 'Taki email istnieje już w bazie danych!';
                     }
-                    #czy login istnieje juz w bazie
                     $wynik = $conn->query("SELECT id FROM users WHERE login='$login'");
                     if(!$wynik) throw new Exception($conn->error);
                     $ile_loginow = $wynik->num_rows;
                     if($ile_loginow) {
                         $bledy['login'] = 'Taki login istnieje już w bazie danych!';
                     }
-                    #rejestracja udana
                     if(empty($bledy)) {
                         $haslo_hash = password_hash($haslo, PASSWORD_DEFAULT);
                         if($conn->query("INSERT INTO users VALUES (NULL, '$login', '$haslo_hash', '$email')")) {
@@ -78,7 +71,6 @@
             }
         }
     }
-    #sanityzacja danych
     function dane_post($pole)
     {
         $_POST[$pole] ??= '';
@@ -96,22 +88,7 @@
     href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" 
     integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
     <title>Ćwiczenia PHP</title>
-    <style>
-        body
-        {
-            padding: 100px;
-        }
-        h1
-        {
-            font-size: 50px;
-            text-align: center;
-        }
-        h4
-        {
-            margin-bottom: 50px;
-            text-align: center;
-        }
-    </style>
+    <link href="style.css" rel="stylesheet">
     <!--"Talk is cheap, show me the code."-->
 </head>
 <body>
@@ -173,7 +150,7 @@
             <div class="col">
                 <div class="form-group">
                     <label>Login</label>
-                    <input class="form-control <?= isset($_SESSION['blad_log']) ? 'is-invalid' : ''?>" name="llogin" type="text">
+                    <input class="form-control <?= isset($_SESSION['blad_log']) ? 'is-invalid' : ''?>" name="llogin" type="text" value="<?= $_SESSION['llogin'] ??= '';?>">
                     <div class="invalid-feedback">
                         <?= $_SESSION['blad_log'] ?? ''?>
                     </div>
@@ -182,7 +159,7 @@
             <div class="col">
                 <div class="form-group">
                     <label>Hasło</label>
-                    <input class="form-control <?= isset($_SESSION['blad_log']) ? 'is-invalid' : ''?>" type="password" name="lhaslo">
+                    <input class="form-control <?= isset($_SESSION['blad_log']) ? 'is-invalid' : ''?>" type="password" name="lhaslo" <?= $_SESSION['llogin'] ? 'autofocus' : ''; ?>>
                 </div>
             </div>
         </div>
@@ -193,5 +170,5 @@
 </body>
 </html>
 <?php
-    unset($_SESSION['blad_log']);
+    unset($_SESSION);
 ?>

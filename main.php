@@ -45,46 +45,8 @@
     <link rel="stylesheet" 
     href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" 
     integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <link href="style.css" rel="stylesheet">
     <title>Ćwiczenia PHP</title>
-    <style>
-        body
-        {
-            padding: 100px;
-        }
-        h1
-        {
-            font-size: 50px;
-            text-align: center;
-        }
-        h4
-        {
-            margin-bottom: 50px;
-            text-align: center;
-        }
-        article
-        {
-            margin-left: auto;
-            margin-right: auto;
-            width: 200px;
-            text-align: center;
-        }
-        table
-        {
-            margin-left: auto;
-            margin-right: auto;
-            text-align: center;
-            margin-top: 20px;
-        }
-        td
-        {
-            border: 1px solid black;
-            width: 200px;
-        }
-        th
-        {
-            border: 1px solid black;
-        }
-    </style>
     <!--"Talk is cheap, show me the code."-->
 </head>
 <body>
@@ -159,8 +121,12 @@
                                 <td><?= $naprawa['tytul'] ?></td>
                                 <td><?= $naprawa['przebieg'] ?></td>
                                 <td><?= $naprawa['data'] ?></td>
-                                <td><a href="?id=<?= $naprawa['id'] ?>">Edytuj</a></td>
-                                <td><a href="?id_usun=<?= $naprawa['id'] ?>">X</a></td>
+                                <td><a class= "btn btn-info" href="?id=<?= $naprawa['id'] ?>">Edytuj</a></td>
+                                <td>
+                                    <form onSubmit="return confirm('Czy na pewno chcesz usunąć?')" method="GET">
+                                        <button class= "btn btn-danger" name="id_usun" value="<?= $naprawa['id'] ?>">Usuń</button>
+                                    </form>
+                                </td>
                             </tr>
                         <?php endforeach; ?>
                 </tbody>

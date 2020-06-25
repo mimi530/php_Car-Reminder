@@ -10,6 +10,7 @@
             }
             else {
                 $login = filter_input(INPUT_POST, 'llogin');
+                $_SESSION['llogin'] = $login;
                 $haslo = filter_input(INPUT_POST, 'lhaslo');
                 if($wynik = $conn->query("SELECT * FROM users WHERE login='$login'"))
                 {
