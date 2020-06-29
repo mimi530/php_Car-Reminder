@@ -1,6 +1,7 @@
 # Car-Reminder
 Strona prezentująca zarys umiejętności w języku PHP.</br>
 Do przetestowania na: http://car-reminder.000webhostapp.com </br>
+(Strona może trochę nie działać ale to akurat wina hostingu :)
 <ul>
   Strona może wydawać się chaotyczna i bez sensu ale jej celem jest tylko i wyłącznie zaprezentowanie podstawowych umiejętności w języku PHP. Dlatego znajdują się na niej takie rzeczy jak:
   <li>podstawowy html</li>
