@@ -1,174 +1,134 @@
 <?php
     session_start();
     if(isset($_SESSION['zalogowany']) && $_SESSION['zalogowany']) header("Location: main.php");
-    $bledy = [];
-    define('WYMAGANE','To pole jest wymagane!');
-    $login = '';
-    $email = '';
-    $haslo = '';
-    $haslo2 = '';
-    if($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $login = dane_post('login');
-        $email = dane_post('email');
-        $haslo = dane_post('haslo');
-        $haslo2 = dane_post('haslo2');
-        if(!$login) {
-            $bledy['login'] = WYMAGANE;
-        } elseif (strlen($login)<3 || strlen($login)>20) {
-            $bledy['login'] = 'Login musi posiadać od 3-20 znaków!';
-        }
-        if(!$email) {
-            $bledy['email'] = WYMAGANE;
-        } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $bledy['email'] = 'E-mail musi być poprawny!';
-        }
-        if(!$haslo) {
-            $bledy['haslo'] = WYMAGANE;
-        } elseif(strlen($haslo)<8) {
-            $bledy['haslo'] = "Hasło za krótkie!";
-        }
-        if(!$haslo2) {
-            $bledy['haslo2'] = WYMAGANE;
-        }
-        if($haslo && $haslo2 && strcmp($haslo, $haslo2)) {
-            $bledy['haslo2'] = 'Hasła muszą się zgadzać!';
-        }
-        if(empty($bledy)) {
-            require_once('baza.php');
-            mysqli_report(MYSQLI_REPORT_STRICT);
-            try {
-                $conn = new mysqli($dbhost, $dbuser, $dbpass, $dbname);
-                if($conn->connect_errno!=0) {
-                    throw new Exception(mysqli_connect_errno());
-                }
-                else {
-                    $wynik = $conn->query("SELECT id FROM users WHERE email='$email'");
-                    if(!$wynik) throw new Exception($conn->error);
-                    $ile_maili = $wynik->num_rows;
-                    if($ile_maili) {
-                        $bledy['email'] = 'Taki email istnieje już w bazie danych!';
-                    }
-                    $wynik = $conn->query("SELECT id FROM users WHERE login='$login'");
-                    if(!$wynik) throw new Exception($conn->error);
-                    $ile_loginow = $wynik->num_rows;
-                    if($ile_loginow) {
-                        $bledy['login'] = 'Taki login istnieje już w bazie danych!';
-                    }
-                    if(empty($bledy)) {
-                        $haslo_hash = password_hash($haslo, PASSWORD_DEFAULT);
-                        if($conn->query("INSERT INTO users VALUES (NULL, '$login', '$haslo_hash', '$email')")) {
-                            $_SESSION['udana'] = ' udana!';
-                            header('Location: index.php');
-                            exit();
-                        }
-                        else throw new Exception($conn->error);
-                    }
-                    $conn->close();
-                }
-            }
-            catch(Exception $error) {
-                echo 'Błąd serwera :/';
-            }
-        }
-    }
-    function dane_post($pole)
-    {
-        $_POST[$pole] ??= '';
-        return htmlspecialchars(stripslashes($_POST[$pole]));
-    }
 ?>
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-    <meta charset="UTF-8">
-    <meta author="Michał Domżalski">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" 
-    href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" 
-    integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
-    <title>Car Reminder</title>
-    <link href="style.css" rel="stylesheet">
+    <meta name="description" content="">
+    <meta name="author" content="Michał Domżalski, Paweł Graboś">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <title>Car Service History</title>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/style.css">
     <!--"Talk is cheap, show me the code."-->
 </head>
-<body>
-    <h1>Car-Reminder!</h1>
-    <h4>Strona stworzona w celu przećwiczenia umiejętności PHP. Żeby nie była bezużyteczna to symuluje 
-        "książeczkę serwisową" aby pamiętać kiedy przeprowadzaliśmy naprawy :)</h4></br>
-    <h2>Rejestracja <?= $_SESSION['udana'] ??= ''; unset($_SESSION['udana']);?></h2>
-    <form action="" method="post">
-        <div class="row">
-            <div class="col">
-                <div class="form-group">
-                    <label>Login</label>
-                    <input class="form-control <?= isset($bledy['login']) ? 'is-invalid' : ''?>" type="text" name="login" value="<?= $login;?>">
-                    <small class="form-text text-muted">3-20 znaków.</small>
-                    <div class="invalid-feedback">
-                        <?= $bledy['login'] ?>
+<body class="bg-index">
+    <div class="container-fluid">
+        <div class="mt-5 blackFog">
+            <header>
+                <div class="row no-gutters">
+                    <div class="col d-flex align-items-center flex-column text-center">
+                        <h1 class="mt-5">Car Service History</h1>
+                        <p class="w-75">
+                            Strona stworzona w dwuosobowym zespole w celu przećwiczenia umiejętności. Symuluje 
+                            "książeczkę serwisową" aby pamiętać kiedy przeprowadzaliśmy naprawy :)
+                        </p>
                     </div>
                 </div>
-            </div>
-            <div class="col">
-                <div class="form-group">
-                    <label>E-mail</label>
-                    <input class="form-control <?= isset($bledy['email']) ? 'is-invalid' : ''?>" type="text" name="email" value="<?= $email;?>">
-                    <div class="invalid-feedback">
-                        <?= $bledy['email'] ?>
-                    </div>
-                </div>
-            </div>
+            </header>
+            <main>
+                <article>
+                    <section>
+                        <header>
+                            <div class="row mt-2 no-gutters">
+                                <div class="col text-center">
+                                    <h2>Logowanie</h2>
+                                </div>
+                            </div>
+                        </header>
+                        <form action="php/logowanie.php" method="post">
+                            <div class="row no-gutters justify-content-center">
+                                <div class="col-8 col-md-4 col-lg-3 mb-3 mx-2">
+                                    <div class="form-group">
+                                        <label>Login</label>
+                                        <input class="form-control <?= isset($_SESSION['blad_log']) ? 'is-invalid' : ''?>" name="llogin" type="text" value="<?= $_SESSION['llogin'] ??= ''; unset($_SESSION['llogin'])?>">
+                                        <div class="invalid-feedback">
+                                            <?= $_SESSION['blad_log'] ?? ''; unset($_SESSION['blad_log'])?>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-8 col-md-4 col-lg-3 mb-3 mx-2">
+                                    <div class="form-group">
+                                        <label>Hasło</label>
+                                        <input class="form-control <?= isset($_SESSION['blad_log']) ? 'is-invalid' : ''?>" type="password" name="lhaslo" <?= isset($_SESSION['llogin']) ? 'autofocus' : ''; ?>>
+                                    </div>
+                                </div>
+                                <div class="col-12 mb-5">
+                                    <div class="form-group text-center">
+                                        <button class="btn btn-primary">Zaloguj</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </section>
+                    <section>
+                        <header>
+                            <div class="row no-gutters">
+                                <div class="col text-center">
+                                    <h2>Rejestracja <?= $_SESSION['udana'] ??= ''; unset($_SESSION['udana']);?></h2>
+                                </div>
+                            </div>
+                        </header>
+                        <form action="php/signup.php" method="post">
+                            <div class="row justify-content-center no-gutters">
+                                <div class="col-8 col-md-4 col-lg-3 mx-2">
+                                    <div class="form-group">
+                                        <label>Login</label>
+                                        <input class="form-control <?= isset($_SESSION['e_login']) ? 'is-invalid' : ''?>" type="text" name="login" value="<?= $_SESSION['fr_login'] ??= ''; unset($_SESSION['fr_login']) ?>">
+                                        <small class="form-text text-muted">3-20 znaków.</small>
+                                        <div class="invalid-feedback">
+                                            <?= $_SESSION['e_login']; unset($_SESSION['e_login']) ?>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-8 col-md-4 col-lg-3 mx-2">
+                                    <div class="form-group">
+                                        <label>E-mail</label>
+                                        <input class="form-control <?= isset($_SESSION['e_email']) ? 'is-invalid' : ''?>" type="text" name="email" value="<?= $_SESSION['fr_email'] ??= ''; unset($_SESSION['fr_email']) ?>">
+                                        <div class="invalid-feedback">
+                                            <?= $_SESSION['e_email']; unset($_SESSION['e_email']) ?>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row justify-content-center no-gutters">
+                                <div class="col-8 col-md-4 col-lg-3 mx-2">
+                                    <div class="form-group">
+                                        <label>Hasło</label>
+                                        <input class="form-control <?= isset($_SESSION['e_haslo']) ? 'is-invalid' : ''?>" name="haslo" type="password" value="<?= $_SESSION['fr_haslo'] ??= ''; unset($_SESSION['fr_haslo']) ?>">
+                                        <small class="form-text text-muted">Min. 8 znaków</small>
+                                        <div class="invalid-feedback">
+                                            <?= $_SESSION['e_haslo']; unset($_SESSION['e_haslo']) ?>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-8 col-md-4 col-lg-3 mx-2">
+                                    <div class="form-group">
+                                        <label>Powtórz hasło</label>
+                                        <input class="form-control <?= isset($_SESSION['e_haslo2']) ? 'is-invalid' : ''?>" name="haslo2" type="password" value="<?= $_SESSION['fr_haslo2'] ??= ''; unset($_SESSION['fr_haslo2']) ?>">
+                                        <div class="invalid-feedback">
+                                            <?= $_SESSION['e_haslo2']; unset($_SESSION['e_haslo2']) ?>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12"></div>
+                                <div class="form-group text-center">
+                                    <input type="submit" class="btn btn-primary" value="Zarejestruj!">
+                                </div>
+                            </div>
+                        </form>
+                    </section>
+                </article>
+            </main>
         </div>
-        <div class="row">
-            <div class="col">
-                <div class="form-group">
-                    <label>Hasło</label>
-                    <input class="form-control <?= isset($bledy['haslo']) ? 'is-invalid' : ''?>" name="haslo" type="password" value="<?= $haslo;?>">
-                    <small class="form-text text-muted">Min. 8 znaków</small>
-                    <div class="invalid-feedback">
-                        <?= $bledy['haslo'] ?>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="form-group">
-                    <label>Powtórz hasło</label>
-                    <input class="form-control <?= isset($bledy['haslo2']) ? 'is-invalid' : ''?>" name="haslo2" type="password" value="<?= $haslo2;?>">
-                    <div class="invalid-feedback">
-                        <?= $bledy['haslo2'] ?>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="form-group">
-            <input type="submit" class="btn btn-primary" value="Zarejestruj!">
-        </div>
-    </form>
-    </br>
-    <h2>Logowanie</h2>
-    <form action="logowanie.php" method="post">
-        <div class="row">
-            <div class="col">
-                <div class="form-group">
-                    <label>Login</label>
-                    <input class="form-control <?= isset($_SESSION['blad_log']) ? 'is-invalid' : ''?>" name="llogin" type="text" value="<?= $_SESSION['llogin'] ??= '';?>">
-                    <div class="invalid-feedback">
-                        <?= $_SESSION['blad_log'] ?? ''?>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="form-group">
-                    <label>Hasło</label>
-                    <input class="form-control <?= isset($_SESSION['blad_log']) ? 'is-invalid' : ''?>" type="password" name="lhaslo" <?= $_SESSION['llogin'] ? 'autofocus' : ''; ?>>
-                </div>
-            </div>
-        </div>
-        <div class="form-group">
-            <button class="btn btn-primary">Zaloguj</button>
-        </div>
-    </form> 
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
 </body>
 </html>
-<?php
-    unset($_SESSION);
-?>

@@ -1,0 +1,66 @@
+.b1
+{
+	border: 1px solid red;
+}
+body
+{
+	color: white;
+	background: white;
+}
+.bg-index
+{
+	background: url("../img/img2.jpg");
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+}
+.bg-main
+{
+	background: url("../img/img1.jpg");
+	background-position: top;
+	background-repeat: no-repeat;
+}
+header h1
+{
+	font-size: 50px;
+}
+header h2
+{
+	font-size: 38px;
+}
+header p
+{
+	font-size: 24px;
+}
+.blackFog
+{
+	background-color: rgba(0,0,0,0.5);
+}
+.removeButton
+{
+	border: none;
+	background: none;
+	color: #ed0000;
+}
+.removeButton:hover
+{
+	border: none;
+	background: none;
+	color: #ba0000;
+}
+.tCol1
+{
+	width: 55%;
+}
+.tCol2
+{
+	width: 10%;
+}
+.tCol3
+{
+	width: 25%;
+}
+.buttonsCol
+{
+	width: 10%;
+}

@@ -2,5 +2,5 @@
     $dbhost = 'localhost';
     $dbuser = 'root';
     $dbpass = '';
-    $dbname = 'car_reminder';
+    $dbname = 'car-reminder';
 ?>
