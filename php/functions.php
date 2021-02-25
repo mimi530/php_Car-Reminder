@@ -5,7 +5,7 @@ if($conn->connect_errno!=0) {
     exit("Błąd serwera :/ Przepraszamy za utrudnienia.");
 }
 function wypiszNaprawy($id_user) {
-    $sql = "SELECT * FROM repairs WHERE id_user=? ORDER BY data DESC";
+    $sql = "SELECT * FROM repairs WHERE id_user=? ORDER BY data DESC, id DESC";
     global $conn;
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $id_user);

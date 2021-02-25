@@ -45,7 +45,7 @@
                                 <div class="col-8 col-md-4 col-lg-3 mb-3 mx-2">
                                     <div class="form-group">
                                         <label>Login</label>
-                                        <input class="form-control <?= isset($_SESSION['blad_log']) ? 'is-invalid' : ''?>" name="llogin" type="text" value="<?= $_SESSION['llogin'] ??= ''; unset($_SESSION['llogin'])?>">
+                                        <input class="form-control <?= isset($_SESSION['blad_log']) ? 'is-invalid' : ''?>" name="llogin" type="text" value="<?= $_SESSION['llogin'] ?? ''; unset($_SESSION['llogin'])?>">
                                         <div class="invalid-feedback">
                                             <?= $_SESSION['blad_log'] ?? ''; unset($_SESSION['blad_log'])?>
                                         </div>
@@ -69,7 +69,7 @@
                         <header>
                             <div class="row no-gutters">
                                 <div class="col text-center">
-                                    <h2>Rejestracja <?= $_SESSION['udana'] ??= ''; unset($_SESSION['udana']);?></h2>
+                                    <h2>Rejestracja <?= $_SESSION['udana'] ?? ''; unset($_SESSION['udana']);?></h2>
                                 </div>
                             </div>
                         </header>
@@ -78,7 +78,7 @@
                                 <div class="col-8 col-md-4 col-lg-3 mx-2">
                                     <div class="form-group">
                                         <label>Login</label>
-                                        <input class="form-control <?= isset($_SESSION['e_login']) ? 'is-invalid' : ''?>" type="text" name="login" value="<?= $_SESSION['fr_login'] ??= ''; unset($_SESSION['fr_login']) ?>">
+                                        <input class="form-control <?= isset($_SESSION['e_login']) ? 'is-invalid' : ''?>" type="text" name="login" value="<?= $_SESSION['fr_login'] ?? ''; unset($_SESSION['fr_login']) ?>">
                                         <small class="form-text text-muted">3-20 znaków.</small>
                                         <div class="invalid-feedback">
                                             <?= $_SESSION['e_login']; unset($_SESSION['e_login']) ?>
@@ -88,7 +88,7 @@
                                 <div class="col-8 col-md-4 col-lg-3 mx-2">
                                     <div class="form-group">
                                         <label>E-mail</label>
-                                        <input class="form-control <?= isset($_SESSION['e_email']) ? 'is-invalid' : ''?>" type="text" name="email" value="<?= $_SESSION['fr_email'] ??= ''; unset($_SESSION['fr_email']) ?>">
+                                        <input class="form-control <?= isset($_SESSION['e_email']) ? 'is-invalid' : ''?>" type="text" name="email" value="<?= $_SESSION['fr_email'] ?? ''; unset($_SESSION['fr_email']) ?>">
                                         <div class="invalid-feedback">
                                             <?= $_SESSION['e_email']; unset($_SESSION['e_email']) ?>
                                         </div>
@@ -99,7 +99,7 @@
                                 <div class="col-8 col-md-4 col-lg-3 mx-2">
                                     <div class="form-group">
                                         <label>Hasło</label>
-                                        <input class="form-control <?= isset($_SESSION['e_haslo']) ? 'is-invalid' : ''?>" name="haslo" type="password" value="<?= $_SESSION['fr_haslo'] ??= ''; unset($_SESSION['fr_haslo']) ?>">
+                                        <input class="form-control <?= isset($_SESSION['e_haslo']) ? 'is-invalid' : ''?>" name="haslo" type="password" value="<?= $_SESSION['fr_haslo'] ?? ''; unset($_SESSION['fr_haslo']) ?>">
                                         <small class="form-text text-muted">Min. 8 znaków</small>
                                         <div class="invalid-feedback">
                                             <?= $_SESSION['e_haslo']; unset($_SESSION['e_haslo']) ?>
@@ -109,7 +109,7 @@
                                 <div class="col-8 col-md-4 col-lg-3 mx-2">
                                     <div class="form-group">
                                         <label>Powtórz hasło</label>
-                                        <input class="form-control <?= isset($_SESSION['e_haslo2']) ? 'is-invalid' : ''?>" name="haslo2" type="password" value="<?= $_SESSION['fr_haslo2'] ??= ''; unset($_SESSION['fr_haslo2']) ?>">
+                                        <input class="form-control <?= isset($_SESSION['e_haslo2']) ? 'is-invalid' : ''?>" name="haslo2" type="password" value="<?= $_SESSION['fr_haslo2'] ?? ''; unset($_SESSION['fr_haslo2']) ?>">
                                         <div class="invalid-feedback">
                                             <?= $_SESSION['e_haslo2']; unset($_SESSION['e_haslo2']) ?>
                                         </div>
